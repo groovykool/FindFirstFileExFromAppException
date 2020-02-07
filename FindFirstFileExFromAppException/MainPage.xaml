@@ -1,0 +1,34 @@
+﻿<Page
+  x:Class="FindFirstFileExFromAppException.MainPage"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:local="using:FindFirstFileExFromAppException"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  mc:Ignorable="d"
+  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+  <Grid>
+    <StackPanel  Orientation="Vertical">
+    <Button
+      x:Name="Pick"
+      Content="Pick a folder"
+      Margin="12"
+      Click="Pick_Click"/>
+      <TextBox
+        x:Name="Folder"
+        Header="Folder"
+        Margin="16"
+        HorizontalAlignment="Left"/>
+      <TextBox
+        x:Name="Search"
+        Header="Search String lpFileName"
+        Margin="16"
+        HorizontalAlignment="Left" />
+      <TextBox
+        x:Name="FileCount"
+        Margin="16"
+        Header="File Count"
+        HorizontalAlignment="Left"/>
+    </StackPanel>
+  </Grid>
+</Page>
