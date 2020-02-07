@@ -113,13 +113,12 @@ namespace FindFirstFileExFromAppException
 
       string pattern = @"\\$";
       path = Regex.Replace(path, pattern, "", RegexOptions.IgnoreCase);
+
       searchtext = path + searchPattern;
-      IntPtr hFile = FindFirstFileExFromApp(path + searchPattern, findInfoLevel, out findData, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
+      IntPtr hFile = FindFirstFileExFromApp(searchtext, findInfoLevel, out findData, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
       //check for access denied 
       if (hFile != new IntPtr(-1))
       {
-        //var pathslash = path + "\\";
-        if (path.Last<char>() != '\\') path += "\\";
         do
         {
           if (findData.cFileName == "." || findData.cFileName == "..") continue;
