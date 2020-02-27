@@ -8,27 +8,38 @@
   mc:Ignorable="d"
   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
   <Grid>
-    <StackPanel  Orientation="Vertical">
-    <Button
-      x:Name="Pick"
-      Content="Pick a folder"
-      Margin="12"
-      Click="Pick_Click"/>
+    <StackPanel
+      Orientation="Vertical">
+      <Button
+        x:Name="Pick"
+        Content="Pick a folder"
+        Margin="12"
+        Click="Pick_Click" />
       <TextBox
         x:Name="Folder"
         Header="Folder"
-        Margin="16"
-        HorizontalAlignment="Left"/>
+        Margin="12"
+        HorizontalAlignment="Left" />
       <TextBox
         x:Name="Search"
         Header="Search String lpFileName"
-        Margin="16"
+        Margin="12"
         HorizontalAlignment="Left" />
       <TextBox
         x:Name="FileCount"
-        Margin="16"
+        Margin="12"
         Header="File Count"
-        HorizontalAlignment="Left"/>
+        HorizontalAlignment="Left" />
+      <Button
+        x:Name="music"
+        Content="Music Lib"
+        Margin="12"
+        Click="music_Click" />
+      <TextBox
+        x:Name="MusicCount"
+        Margin="12"
+        Header="Music Count"
+        HorizontalAlignment="Left" />
     </StackPanel>
   </Grid>
 </Page>

@@ -23,7 +23,7 @@ namespace FindFirstFileExFromAppException
   {
     uint count = 0;
     static string searchtext = "";
-    StorageItemAccessList fal=StorageApplicationPermissions.FutureAccessList;
+    StorageItemAccessList fal = StorageApplicationPermissions.FutureAccessList;
     public MainPage()
     {
       this.InitializeComponent();
@@ -46,6 +46,7 @@ namespace FindFirstFileExFromAppException
         fal.AddOrReplace(tok, folder, folder.Path);
         Folder.Text = folder.Path;
         await Task.Run(() => count = FCount(folder.Path, "\\*"));
+        //count = await SlowCount(folder);
       }
       else
       {
@@ -116,6 +117,7 @@ namespace FindFirstFileExFromAppException
 
       searchtext = path + searchPattern;
       IntPtr hFile = FindFirstFileExFromApp(searchtext, findInfoLevel, out findData, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
+      List<string> subDirs = new List<string>();
       //check for access denied 
       if (hFile != new IntPtr(-1))
       {
@@ -124,7 +126,7 @@ namespace FindFirstFileExFromAppException
           if (findData.cFileName == "." || findData.cFileName == "..") continue;
           if ((findData.dwFileAttributes & (uint)FileAttributes.Directory) == (uint)FileAttributes.Directory)
           {
-            continue;
+            subDirs.Add(path + "\\" + findData.cFileName);
           }
           else
           {
@@ -132,6 +134,17 @@ namespace FindFirstFileExFromAppException
             count++;
           }
         } while (FindNextFile(hFile, out findData));
+        object locker = new object();
+        Parallel.ForEach(subDirs, subdir =>
+        {
+          var temp = FCount(subdir, searchPattern);
+          //apply lock when adding result from each thread to prevent conflict
+          lock (locker)
+          {
+            count+= temp;   
+          }
+        }
+        );
 
       }
       else
@@ -140,6 +153,45 @@ namespace FindFirstFileExFromAppException
       }
       FindClose(hFile);
       return count;
+    }
+    public async Task<uint> SlowCount(StorageFolder folder)
+    {
+      Folder.Text = folder.Path;
+      var items = await folder.GetFilesAsync();
+      count = Convert.ToUInt32(items.Where(p => p is StorageFile).Count());
+      return count;
+    }
+    public async static Task<uint> PLibI(KnownLibraryId id)
+    {
+      uint count = 0;
+      try
+      {
+        var Library = await StorageLibrary.GetLibraryAsync(id);
+        // Bind the FoldersListView to the list of folders that make up the library
+        var lfolders = Library.Folders;
+        foreach (var folder in lfolders)
+        {
+          if (folder != null)
+          {
+            var pth = folder.Path;
+            await Task.Run(() => count += FCount(pth, "\\*"));
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Debug.WriteLine($"PLibI Exception {ex.Message}");
+      }
+
+      return count;
+    }
+
+    private async void music_Click(object sender, RoutedEventArgs e)
+    {
+      MusicCount.Text = "";
+
+      var count = await PLibI(KnownLibraryId.Music);
+      MusicCount.Text = count.ToString();
     }
   }
 }
