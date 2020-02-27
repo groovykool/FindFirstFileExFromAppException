@@ -134,22 +134,26 @@ namespace FindFirstFileExFromAppException
             count++;
           }
         } while (FindNextFile(hFile, out findData));
-        object locker = new object();
-        Parallel.ForEach(subDirs, subdir =>
+        //object locker = new object();
+        //Parallel.ForEach(subDirs, subdir =>
+        //{
+        //  var temp = FCount(subdir, searchPattern);
+        //  //apply lock when adding result from each thread to prevent conflict
+        //  lock (locker)
+        //  {
+        //    count+= temp;   
+        //  }
+        //}
+        //);
+        foreach (var subdir in subDirs)
         {
-          var temp = FCount(subdir, searchPattern);
-          //apply lock when adding result from each thread to prevent conflict
-          lock (locker)
-          {
-            count+= temp;   
-          }
+          count+= FCount(subdir, searchPattern);
         }
-        );
 
       }
       else
       {
-        Debug.WriteLine($"Access Denied");
+        Debug.WriteLine($"Access Denied::  {searchtext}");
       }
       FindClose(hFile);
       return count;
